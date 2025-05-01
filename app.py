@@ -12,6 +12,8 @@ import numpy as np
 import streamlit as st
 import matplotlib.pyplot as plt
 from pathlib import Path
+import cloudpickle
+
 
 st.set_page_config(page_title="Model Zoo – Interactive Predictor",
                    page_icon="✨", layout="centered")
@@ -25,10 +27,10 @@ OUTPUT_UNIT  = "MPa"              # change to your real target-unit
 
 
 # ───────────────────── load artefacts ──────────────────────
-scaler = joblib.load(MODEL_DIR / "scaler.pkl")
+scaler = cloudpickle.load(MODEL_DIR / "scaler.pkl")
 
 model_paths = [p for p in MODEL_DIR.glob("*.pkl") if p.name != "scaler.pkl"]
-models = {p.stem: joblib.load(p) for p in model_paths}
+models = {p.stem: cloudpickle.load(p) for p in model_paths}
 
 # Load one importance file only to extract column order
 feature_names = list(
