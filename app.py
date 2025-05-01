@@ -27,11 +27,15 @@ OUTPUT_UNIT  = "MPa"              # change to your real target-unit
 
 
 # ───────────────────── load artefacts ──────────────────────
-scaler = cloudpickle.load(MODEL_DIR / "scaler.pkl")
+with open(MODEL_DIR / "scaler.pkl", "rb") as f:
+    scaler = cloudpickle.load(f)
 
 model_paths = [p for p in MODEL_DIR.glob("*.pkl") if p.name != "scaler.pkl"]
-models = {p.stem: cloudpickle.load(p) for p in model_paths}
-
+# models = {p.stem: cloudpickle.load(p) for p in model_paths}
+models = {}
+for p in model_paths:
+    with open(p, "rb") as f:
+        models[p.stem] = cloudpickle.load(f)
 # Load one importance file only to extract column order
 feature_names = list(
     pd.read_csv(IMP_DIR / f"{model_paths[0].stem}_imp.csv")["feature"]
